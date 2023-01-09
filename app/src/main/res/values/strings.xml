@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Pocket dictionary</string>
+    <string name="synonyms">Synonyms</string>
+    <string name="definitions">Definitions</string>
+    <string name="antonyms">Antonyms</string>
+    <string name="rhymes">Rhymes</string>
+</resources>
