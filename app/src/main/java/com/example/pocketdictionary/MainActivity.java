@@ -8,6 +8,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.example.pocketdictionary.database.AppDatabase;
+import com.example.pocketdictionary.database.dao.AntonymsDAO;
+import com.example.pocketdictionary.database.dao.DefinitionsDAO;
+import com.example.pocketdictionary.database.dao.RhymesDAO;
 import com.example.pocketdictionary.database.dao.SynonymsDAO;
 import com.example.pocketdictionary.database.dao.WordDAO;
 import com.example.pocketdictionary.model.WhatToGet;
@@ -17,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
     private Spinner detailsDropdown;
     private WordDAO wordDAO;
     private SynonymsDAO synonymsDAO;
+    private AntonymsDAO antonymsDAO;
+    private RhymesDAO rhymesDAO;
+    private DefinitionsDAO definitionsDAO;
     private AppDatabase db;
     private ArrayAdapter<String> dropdownAdapter;
 
@@ -31,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
                 AppDatabase.class, "dictionary").build();
         wordDAO = db.wordDAO();
         synonymsDAO = db.synonymsDAO();
+        antonymsDAO = db.antonymsDAO();
+        rhymesDAO = db.rhymesDAO();
+        definitionsDAO = db.definitionsDAO();
         dropdownAdapter =new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
         detailsDropdown.setAdapter(dropdownAdapter);
     }
