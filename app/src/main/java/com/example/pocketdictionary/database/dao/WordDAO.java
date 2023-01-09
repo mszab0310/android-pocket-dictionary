@@ -1,4 +1,4 @@
-package com.example.pocketdictionary.database;
+package com.example.pocketdictionary.database.dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -16,6 +16,9 @@ public interface WordDAO {
 
     @Query("SELECT * FROM words WHERE word LIKE :query")
     WordEntry findByName(String query);
+
+    @Query("SELECT * from words where id = :id")
+    WordEntry findById(Long id);
 
     @Insert
     void insert(WordEntry wordEntry);
