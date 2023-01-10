@@ -4,7 +4,8 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "synonyms", foreignKeys = {@ForeignKey(entity = WordEntry.class,
+@Entity(tableName = "synonyms",
+        foreignKeys = {@ForeignKey(entity = WordEntry.class,
         parentColumns = "id",
         childColumns = "wordId",
         onDelete = ForeignKey.CASCADE)})

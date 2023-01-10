@@ -1,9 +1,12 @@
 package com.example.pocketdictionary;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -25,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private DefinitionsDAO definitionsDAO;
     private AppDatabase db;
     private ArrayAdapter<String> dropdownAdapter;
+    private AlertDialog.Builder alertBuilder;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         //database init
         db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "dictionary").build();
+                AppDatabase.class, "dictionary-database").build();
         wordDAO = db.wordDAO();
         synonymsDAO = db.synonymsDAO();
         antonymsDAO = db.antonymsDAO();
@@ -42,5 +47,21 @@ public class MainActivity extends AppCompatActivity {
         definitionsDAO = db.definitionsDAO();
         dropdownAdapter =new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
         detailsDropdown.setAdapter(dropdownAdapter);
+        alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder.setTitle("Dictionary!").setMessage("Do you want to use offline or online dictionary?")
+                .setCancelable(false)
+                .setPositiveButton("Online", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i(TAG, "onClick: Online");
+                    }
+                }).setNegativeButton("Offline", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i(TAG, "onClick: offline");
+                    }
+                }).show();
     }
+
+
 }

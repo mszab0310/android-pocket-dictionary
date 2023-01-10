@@ -6,20 +6,19 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.example.pocketdictionary.model.Definitions;
-import com.example.pocketdictionary.model.WordEntry;
 
 import java.util.List;
 
 @Dao
 public interface DefinitionsDAO {
     @Query("SELECT * FROM definitions")
-    List<WordEntry> getAll();
+    List<Definitions> getAll();
 
     @Query("SELECT * FROM definitions WHERE definition LIKE :query")
-    WordEntry findByName(String query);
+    Definitions findByName(String query);
 
     @Query("SELECT * from definitions where id = :id")
-    WordEntry findById(Long id);
+    Definitions findById(Long id);
 
     @Insert
     void insert(Definitions definitions);

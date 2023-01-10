@@ -1,10 +1,12 @@
 package com.example.pocketdictionary.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "rhymes",foreignKeys = {@ForeignKey(entity = WordEntry.class,
+@Entity(tableName = "rhymes",
+        foreignKeys = {@ForeignKey(entity = WordEntry.class,
         parentColumns = "id",
         childColumns = "wordId",
         onDelete = ForeignKey.CASCADE)}
@@ -21,6 +23,14 @@ public class Rhymes {
         this.rhyme = rhyme;
         this.wordId = wordId;
     }
+
+    public Rhymes(Long id, String rhyme, Long wordId) {
+        this.id = id;
+        this.rhyme = rhyme;
+        this.wordId = wordId;
+    }
+
+    public Rhymes(){}
 
     public Long getId() {
         return id;
@@ -44,5 +54,11 @@ public class Rhymes {
 
     public void setWordId(Long wordId) {
         this.wordId = wordId;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }
