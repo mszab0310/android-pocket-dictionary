@@ -5,4 +5,6 @@
     <string name="antonyms">Antonyms</string>
     <string name="rhymes">Rhymes</string>
     <string name="getDefinition">Search</string>
+    <string name="offlineDictionary">Offline Dictionary</string>
+    <string name="onlineDictionary">Online Dictionary</string>
 </resources>

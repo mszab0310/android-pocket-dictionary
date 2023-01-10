@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
 import android.content.DialogInterface;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -51,24 +53,25 @@ public class MainActivity extends AppCompatActivity {
         detailsDropdown.setAdapter(dropdownAdapter);
         alertBuilder = new AlertDialog.Builder(this);
         //checks whether there is an active internet connection or not
+        Intent offlineIntent = new Intent(this, OfflineActivity.class);
         if (InternetCheck.isInternetAvailable(this)) {
             alertBuilder.setTitle("Dictionary!").setMessage("Do you want to use offline or online dictionary?")
                     .setCancelable(false)
                     .setPositiveButton("Online", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //TODO: navigate to online activity
+                            //TODO: stay on online activity page
                             Log.i(TAG, "onClick: Online");
                         }
                     }).setNegativeButton("Offline", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //TODO: navigate to offline activity
+                            startActivity(offlineIntent);
                             Log.i(TAG, "onClick: offline");
                         }
                     }).show();
         } else {
-            //TODO: navigate to offline activity
+            startActivity(offlineIntent);
             Toast noInternetToast = Toast.makeText(getApplicationContext(),"You don't seem to have an internet connection", Toast.LENGTH_LONG);
             noInternetToast.show();
         }
