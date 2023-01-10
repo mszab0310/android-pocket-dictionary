@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> dropdownAdapter;
     private AlertDialog.Builder alertBuilder;
     private static final String TAG = "MainActivity";
+    private Intent offlineIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +51,17 @@ public class MainActivity extends AppCompatActivity {
         antonymsDAO = db.antonymsDAO();
         rhymesDAO = db.rhymesDAO();
         definitionsDAO = db.definitionsDAO();
+
         dropdownAdapter =new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
         detailsDropdown.setAdapter(dropdownAdapter);
         alertBuilder = new AlertDialog.Builder(this);
+        
         //checks whether there is an active internet connection or not
-        Intent offlineIntent = new Intent(this, OfflineActivity.class);
+        offlineIntent = new Intent(this, OfflineActivity.class);
         if (InternetCheck.isInternetAvailable(this)) {
-            alertBuilder.setTitle("Dictionary!").setMessage("Do you want to use offline or online dictionary?")
+            Toast.makeText(getApplicationContext(),"Internet connection established!", Toast.LENGTH_SHORT).show();
+        } else {
+            alertBuilder.setTitle("No internet connection!").setMessage("Do you want to use offline or online dictionary?")
                     .setCancelable(false)
                     .setPositiveButton("Online", new DialogInterface.OnClickListener() {
                         @Override
@@ -70,12 +76,12 @@ public class MainActivity extends AppCompatActivity {
                             Log.i(TAG, "onClick: offline");
                         }
                     }).show();
-        } else {
-            startActivity(offlineIntent);
-            Toast noInternetToast = Toast.makeText(getApplicationContext(),"You don't seem to have an internet connection", Toast.LENGTH_LONG);
-            noInternetToast.show();
         }
+    }
 
+    public void switchToOfflineMode(View view){
+        Toast.makeText(getApplicationContext(),"Going offline", Toast.LENGTH_LONG).show();
+        startActivity(offlineIntent);
     }
 
 

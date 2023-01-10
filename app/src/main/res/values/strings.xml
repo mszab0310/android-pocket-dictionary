@@ -7,4 +7,6 @@
     <string name="getDefinition">Search</string>
     <string name="offlineDictionary">Offline Dictionary</string>
     <string name="onlineDictionary">Online Dictionary</string>
+    <string name="offlineMode">Switch to offline mode</string>
+    <string name="onlineMode">Switch to online mode</string>
 </resources>
