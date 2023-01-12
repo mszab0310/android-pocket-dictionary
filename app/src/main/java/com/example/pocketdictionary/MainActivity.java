@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         dropdownAdapter =new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
         detailsDropdown.setAdapter(dropdownAdapter);
         alertBuilder = new AlertDialog.Builder(this);
-        
+
         //checks whether there is an active internet connection or not
         offlineIntent = new Intent(this, OfflineActivity.class);
         if (InternetCheck.isInternetAvailable(this)) {
@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),"Going offline", Toast.LENGTH_LONG).show();
         startActivity(offlineIntent);
     }
+
+
 
 
 }
