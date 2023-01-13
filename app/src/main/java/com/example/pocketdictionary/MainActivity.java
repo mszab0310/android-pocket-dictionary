@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         //database init
         db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "dictionary-database").fallbackToDestructiveMigration()
+                AppDatabase.class, "dictionary-database")
                 .build();
         wordDAO = db.wordDAO();
         synonymsDAO = db.synonymsDAO();
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         new GetDataTask().execute(word, query);
     }
 
-    class GetDataTask extends AsyncTask<String, Void, List<String>> {
+    private class GetDataTask extends AsyncTask<String, Void, List<String>> {
         @Override
         protected List<String> doInBackground(String... params) {
              word = params[0];
