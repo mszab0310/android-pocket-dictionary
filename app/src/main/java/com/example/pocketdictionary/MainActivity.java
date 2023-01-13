@@ -32,6 +32,7 @@ import com.example.pocketdictionary.util.InternetCheck;
 
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,8 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         //database init
         db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "dictionary-database").fallbackToDestructiveMigration()
-                .build();
+                AppDatabase.class, "dictionary-database").build();
         wordDAO = db.wordDAO();
         synonymsDAO = db.synonymsDAO();
         antonymsDAO = db.antonymsDAO();
@@ -116,25 +116,9 @@ public class MainActivity extends AppCompatActivity {
         String word = searchbar.getText().toString();
         String query = detailsDropdown.getSelectedItem().toString().toLowerCase();
         Log.i(TAG, "searchOnlineButton: word & query" + word + " " + query);
-        new GetDataTask().execute(word, query);
-    }
-
-    class GetDataTask extends AsyncTask<String, Void, List<String>> {
-        @Override
-        protected List<String> doInBackground(String... params) {
-            String word = params[0];
-            String query = params[1];
-            httpRequestService = new HttpRequestService();
-            try {
-                wordDetailTypeArrayList = httpRequestService.getData(word,query);
-                return new ArrayList<>();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(List<String> result) {
+        httpRequestService = new HttpRequestService();
+        try {
+            wordDetailTypeArrayList = httpRequestService.getData(word,query);
             progressBar.setVisibility(View.INVISIBLE);
             arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
             List<String> parsedResponse = new ArrayList<>();
@@ -144,7 +128,10 @@ public class MainActivity extends AppCompatActivity {
             listView.setAdapter(arrayAdapter);
             arrayAdapter.addAll(parsedResponse);
             arrayAdapter.notifyDataSetChanged();
+        } catch (JSONException | InterruptedException | IOException e) {
+            Toast.makeText(context,"Request failed" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+
     }
 
 }
