@@ -1,18 +1,22 @@
 package com.example.pocketdictionary;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
-
+import android.content.Context;
 import android.content.DialogInterface;
-
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import com.example.pocketdictionary.database.AppDatabase;
 import com.example.pocketdictionary.database.dao.AntonymsDAO;
@@ -21,7 +25,14 @@ import com.example.pocketdictionary.database.dao.RhymesDAO;
 import com.example.pocketdictionary.database.dao.SynonymsDAO;
 import com.example.pocketdictionary.database.dao.WordDAO;
 import com.example.pocketdictionary.model.WhatToGet;
+import com.example.pocketdictionary.model.WordDetailType;
+import com.example.pocketdictionary.service.HttpRequestService;
 import com.example.pocketdictionary.util.InternetCheck;
+
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,16 +47,30 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog.Builder alertBuilder;
     private static final String TAG = "MainActivity";
     private Intent offlineIntent;
+    private HttpRequestService httpRequestService;
+    private ListView listView;
+    private ArrayAdapter<String> arrayAdapter;
+    private List<WordDetailType> wordDetailTypeArrayList;
+    private EditText searchbar;
+    private Button searchButton;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         detailsDropdown = findViewById(R.id.detailDropdown);
+        listView = findViewById(R.id.responseListView);
+//        arrayAdapter = new ArrayAdapter<>(this,  android.R.layout.simple_list_item_1);
+//        listView.setAdapter(arrayAdapter);
+        searchbar = findViewById(R.id.wordInputEditText);
+        searchButton = findViewById(R.id.searchOnlineButton);
+        context = getApplicationContext();
 
         //database init
         db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "dictionary-database").build();
+                AppDatabase.class, "dictionary-database").fallbackToDestructiveMigration()
+                .build();
         wordDAO = db.wordDAO();
         synonymsDAO = db.synonymsDAO();
         antonymsDAO = db.antonymsDAO();
@@ -84,7 +109,38 @@ public class MainActivity extends AppCompatActivity {
         startActivity(offlineIntent);
     }
 
+    public void searchOnlineButton(View view){
+        String word = searchbar.getText().toString();
+        String query = detailsDropdown.getSelectedItem().toString().toLowerCase();
+        Log.i(TAG, "searchOnlineButton: word & query" + word + " " + query);
+        new GetDataTask().execute(word, query);
+    }
 
-
+    class GetDataTask extends AsyncTask<String, Void, List<String>> {
+        @Override
+        protected List<String> doInBackground(String... params) {
+            String word = params[0];
+            String query = params[1];
+            httpRequestService = new HttpRequestService();
+            try {
+                wordDetailTypeArrayList = httpRequestService.getData(word,query);
+                return new ArrayList<>();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(List<String> result) {
+            arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
+            List<String> parsedResponse = new ArrayList<>();
+            for(WordDetailType entry: wordDetailTypeArrayList){
+                parsedResponse.add(entry.getString());
+            }
+            listView.setAdapter(arrayAdapter);
+            arrayAdapter.addAll(parsedResponse);
+            arrayAdapter.notifyDataSetChanged();
+        }
+    }
 
 }

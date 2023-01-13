@@ -1,7 +1,9 @@
 package com.example.pocketdictionary.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "definitions",
@@ -10,17 +12,34 @@ import androidx.room.PrimaryKey;
         childColumns = "wordId",
         onDelete = ForeignKey.CASCADE)}
 )
-public class Definitions {
+public class Definitions implements WordDetailType {
     @PrimaryKey(autoGenerate = true)
     private Long id;
 
     private String definition;
 
+    private String partOfSpeech;
+
     private Long wordId;
 
-    public Definitions(String definition, Long wordId) {
+    public Definitions(String definition, Long wordId, String partOfSpeech) {
         this.definition = definition;
         this.wordId = wordId;
+        this.partOfSpeech = partOfSpeech;
+    }
+
+    @Ignore
+    public Definitions(String definition, String partOfSpeech) {
+        this.definition = definition;
+        this.partOfSpeech = partOfSpeech;
+    }
+
+    public String getPartOfSpeech() {
+        return partOfSpeech;
+    }
+
+    public void setPartOfSpeech(String partOfSpeech) {
+        this.partOfSpeech = partOfSpeech;
     }
 
     public Long getWordId() {
@@ -45,5 +64,11 @@ public class Definitions {
 
     public void setDefinition(String definition) {
         this.definition = definition;
+    }
+
+    @NonNull
+    @Override
+    public String getString() {
+        return getPartOfSpeech() + " " + definition;
     }
 }

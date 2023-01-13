@@ -3,6 +3,7 @@ package com.example.pocketdictionary.model;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "rhymes",
@@ -11,7 +12,7 @@ import androidx.room.PrimaryKey;
         childColumns = "wordId",
         onDelete = ForeignKey.CASCADE)}
 )
-public class Rhymes {
+public class Rhymes implements WordDetailType{
     @PrimaryKey(autoGenerate = true)
     private Long id;
 
@@ -28,6 +29,11 @@ public class Rhymes {
         this.id = id;
         this.rhyme = rhyme;
         this.wordId = wordId;
+    }
+
+    @Ignore
+    public Rhymes(String rhyme) {
+        this.rhyme = rhyme;
     }
 
     public Rhymes(){}
@@ -58,7 +64,7 @@ public class Rhymes {
 
     @NonNull
     @Override
-    public String toString() {
-        return super.toString();
+    public String getString() {
+        return rhyme;
     }
 }

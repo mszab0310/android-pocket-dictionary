@@ -1,7 +1,9 @@
 package com.example.pocketdictionary.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "synonyms",
@@ -9,7 +11,7 @@ import androidx.room.PrimaryKey;
         parentColumns = "id",
         childColumns = "wordId",
         onDelete = ForeignKey.CASCADE)})
-public class Synonyms {
+public class Synonyms implements WordDetailType{
     @PrimaryKey(autoGenerate = true)
     public Long id;
 
@@ -21,6 +23,10 @@ public class Synonyms {
     public Synonyms(String synonym, Long wordId) {
         this.synonym = synonym;
         this.wordId = wordId;
+    }
+    @Ignore
+    public Synonyms(String synonym ) {
+        this.synonym = synonym;
     }
 
     public Long getId() {
@@ -47,4 +53,9 @@ public class Synonyms {
         this.wordId = wordId;
     }
 
+    @NonNull
+    @Override
+    public String getString() {
+        return synonym;
+    }
 }
