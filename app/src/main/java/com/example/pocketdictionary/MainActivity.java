@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText searchbar;
     private Button searchButton;
     private Context context;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         detailsDropdown = findViewById(R.id.detailDropdown);
         listView = findViewById(R.id.responseListView);
-//        arrayAdapter = new ArrayAdapter<>(this,  android.R.layout.simple_list_item_1);
-//        listView.setAdapter(arrayAdapter);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
         searchbar = findViewById(R.id.wordInputEditText);
         searchButton = findViewById(R.id.searchOnlineButton);
         context = getApplicationContext();
@@ -110,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void searchOnlineButton(View view){
+        progressBar.setVisibility(View.VISIBLE);
         String word = searchbar.getText().toString();
         String query = detailsDropdown.getSelectedItem().toString().toLowerCase();
         Log.i(TAG, "searchOnlineButton: word & query" + word + " " + query);
@@ -132,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(List<String> result) {
+            progressBar.setVisibility(View.INVISIBLE);
             arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
             List<String> parsedResponse = new ArrayList<>();
             for(WordDetailType entry: wordDetailTypeArrayList){
