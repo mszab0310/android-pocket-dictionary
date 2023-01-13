@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private Button searchButton;
     private Context context;
     private ProgressBar progressBar;
+    private String word;
+    private String query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,12 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }).show();
         }
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                listItemClickListener(i);
+            }
+        });
     }
 
     public void switchToOfflineMode(View view){
@@ -122,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
     class GetDataTask extends AsyncTask<String, Void, List<String>> {
         @Override
         protected List<String> doInBackground(String... params) {
-            String word = params[0];
-            String query = params[1];
+             word = params[0];
+             query = params[1];
             httpRequestService = new HttpRequestService();
             try {
                 wordDetailTypeArrayList = httpRequestService.getData(word,query);
@@ -145,6 +154,23 @@ public class MainActivity extends AppCompatActivity {
             arrayAdapter.addAll(parsedResponse);
             arrayAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void listItemClickListener(int index){
+        alertBuilder.setTitle("Save to offline dictionary?")
+                .setMessage("Do you want to save this " + query.substring(0, query.length() - 1) + " to your offline dictionary?")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
     }
 
 }
