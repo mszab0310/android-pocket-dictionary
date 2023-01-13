@@ -26,8 +26,13 @@ import com.example.pocketdictionary.database.dao.DefinitionsDAO;
 import com.example.pocketdictionary.database.dao.RhymesDAO;
 import com.example.pocketdictionary.database.dao.SynonymsDAO;
 import com.example.pocketdictionary.database.dao.WordDAO;
+import com.example.pocketdictionary.model.Antonyms;
+import com.example.pocketdictionary.model.Definitions;
+import com.example.pocketdictionary.model.Rhymes;
+import com.example.pocketdictionary.model.Synonyms;
 import com.example.pocketdictionary.model.WhatToGet;
 import com.example.pocketdictionary.model.WordDetailType;
+import com.example.pocketdictionary.model.WordEntry;
 import com.example.pocketdictionary.service.HttpRequestService;
 import com.example.pocketdictionary.util.InternetCheck;
 
@@ -74,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         //database init
         db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "dictionary-database")
+                        AppDatabase.class, "dictionary-database")
                 .build();
         wordDAO = db.wordDAO();
         synonymsDAO = db.synonymsDAO();
@@ -82,14 +87,14 @@ public class MainActivity extends AppCompatActivity {
         rhymesDAO = db.rhymesDAO();
         definitionsDAO = db.definitionsDAO();
 
-        dropdownAdapter =new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
+        dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
         detailsDropdown.setAdapter(dropdownAdapter);
         alertBuilder = new AlertDialog.Builder(this);
 
         //checks whether there is an active internet connection or not
         offlineIntent = new Intent(this, OfflineActivity.class);
         if (InternetCheck.isInternetAvailable(this)) {
-            Toast.makeText(getApplicationContext(),"Internet connection established!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Internet connection established!", Toast.LENGTH_SHORT).show();
         } else {
             alertBuilder.setTitle("No internet connection!").setMessage("Do you want to use offline or online dictionary?")
                     .setCancelable(false)
@@ -115,12 +120,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void switchToOfflineMode(View view){
-        Toast.makeText(getApplicationContext(),"Going offline", Toast.LENGTH_LONG).show();
+    public void switchToOfflineMode(View view) {
+        Toast.makeText(getApplicationContext(), "Going offline", Toast.LENGTH_LONG).show();
         startActivity(offlineIntent);
     }
 
-    public void searchOnlineButton(View view){
+    public void searchOnlineButton(View view) {
         progressBar.setVisibility(View.VISIBLE);
         String word = searchbar.getText().toString();
         String query = detailsDropdown.getSelectedItem().toString().toLowerCase();
@@ -131,23 +136,24 @@ public class MainActivity extends AppCompatActivity {
     private class GetDataTask extends AsyncTask<String, Void, List<String>> {
         @Override
         protected List<String> doInBackground(String... params) {
-             word = params[0];
-             query = params[1];
+            word = params[0];
+            query = params[1];
             httpRequestService = new HttpRequestService();
             try {
-                wordDetailTypeArrayList = httpRequestService.getData(word,query);
+                wordDetailTypeArrayList = httpRequestService.getData(word, query);
                 return new ArrayList<>();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(List<String> result) {
             progressBar.setVisibility(View.INVISIBLE);
             arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
             List<String> parsedResponse = new ArrayList<>();
-            for(WordDetailType entry: wordDetailTypeArrayList){
+            for (WordDetailType entry : wordDetailTypeArrayList) {
                 parsedResponse.add(entry.getString());
             }
             listView.setAdapter(arrayAdapter);
@@ -156,21 +162,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void listItemClickListener(int index){
+    private void listItemClickListener(int index) {
         alertBuilder.setTitle("Save to offline dictionary?")
                 .setMessage("Do you want to save this " + query.substring(0, query.length() - 1) + " to your offline dictionary?")
                 .setCancelable(true)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        saveToDatabase(index);
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        //do nothing
                     }
                 }).show();
+    }
+
+    private void saveToDatabase(int index) {
+        WordEntry wordEntry = new WordEntry(word);
+        WordDetailType wordDetailType = wordDetailTypeArrayList.get(index);
+        wordDAO.insert(wordEntry);
+        switch (query) {
+            case WhatToGet.ANTONYMS:
+                antonymsDAO.insert((Antonyms) wordDetailType);
+                break;
+            case WhatToGet.SYNONYMS:
+                synonymsDAO.insert((Synonyms) wordDetailType);
+                break;
+            case WhatToGet.DEFINITIONS:
+                definitionsDAO.insert((Definitions) wordDetailType);
+                break;
+            case WhatToGet.RHYMES:
+                rhymesDAO.insert((Rhymes) wordDetailType);
+                break;
+        }
     }
 
 }
