@@ -58,8 +58,11 @@ public class HttpRequestService {
                 .addHeader("X-RapidAPI-Host", "wordsapiv1.p.rapidapi.com")
                 .build();
         String responseString;
+
         try (Response response = client.newCall(request).execute()) {
             responseString = response.body().string();
+            JSONObject errorObject = new JSONObject(responseString);
+            if(errorObject.has("success") && !errorObject.getBoolean("success"))
             Log.i(TAG, "getData:" + responseString);
             switch (query) {
                 case "definitions":

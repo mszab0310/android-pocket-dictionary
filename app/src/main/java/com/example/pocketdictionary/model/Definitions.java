@@ -5,6 +5,9 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.util.StringUtil;
+
+import org.apache.commons.lang3.StringUtils;
 
 @Entity(tableName = "definitions",
         foreignKeys = {@ForeignKey(entity = WordEntry.class,
@@ -69,6 +72,6 @@ public class Definitions implements WordDetailType {
     @NonNull
     @Override
     public String getString() {
-        return getPartOfSpeech() + " " + definition;
+        return StringUtils.capitalize(partOfSpeech) + ": " + StringUtils.capitalize(definition);
     }
 }

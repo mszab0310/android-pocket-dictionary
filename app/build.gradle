@@ -62,4 +62,6 @@ dependencies {
     // optional - Paging 3 Integration
     implementation "androidx.room:room-paging:$room_version"
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'org.apache.commons:commons-lang3:3.6'
+
 }
