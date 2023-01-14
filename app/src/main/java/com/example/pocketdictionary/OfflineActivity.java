@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.pocketdictionary.database.AppDatabase;
 import com.example.pocketdictionary.model.WhatToGet;
 import com.example.pocketdictionary.model.WordDetailType;
 
@@ -28,6 +29,7 @@ public class OfflineActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayAdapter<String> arrayAdapter;
     private List<WordDetailType> wordDetailTypeArrayList;
+    private AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,7 @@ public class OfflineActivity extends AppCompatActivity {
         searchbar = findViewById(R.id.offlineWordSearchTextEdit);
         searchButton = findViewById(R.id.searchOfflineButton);
         listView = findViewById(R.id.offlineListView);
+        appDatabase = AppDatabase.getInstance(getApplicationContext());
     }
 
     public void switchToOnlineMode(View view) {

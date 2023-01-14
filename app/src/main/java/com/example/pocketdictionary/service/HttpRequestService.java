@@ -25,26 +25,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class HttpRequestService {
-    private ExecutorService executor;
     private static final String WORDS_API_URL = "https://wordsapiv1.p.rapidapi.com/words";
     private static final String TAG = "HttpRequestService";
 
     public HttpRequestService() {
-        executor = Executors.newSingleThreadExecutor();
-    }
-
-
-    public Future<List<WordDetailType>> getDataFromCall(String word, String query) {
-        return executor.submit(new Callable<List<WordDetailType>>() {
-            @Override
-            public List<WordDetailType> call() throws Exception {
-                return getData(word, query);
-            }
-        });
-    }
-
-    public void shutdown(){
-        executor.shutdown();
     }
 
 
