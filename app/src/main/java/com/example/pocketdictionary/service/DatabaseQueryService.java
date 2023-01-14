@@ -50,7 +50,6 @@ public class DatabaseQueryService {
                 }else{
                     wordID = wordDAO.insert(wordEntry);
                 }
-
                 switch (query) {
                     case WhatToGet.ANTONYMS:
                         Antonyms antonyms = (Antonyms) wordDetail;

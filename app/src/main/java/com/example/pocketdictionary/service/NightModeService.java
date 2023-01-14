@@ -39,6 +39,5 @@ public class NightModeService implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // not used in this example
     }
 }

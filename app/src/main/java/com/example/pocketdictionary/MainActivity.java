@@ -126,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
         new GetDataTask().execute(word, query);
     }
 
+    public void showWordNotFoundError(){
+        Toast.makeText(getApplicationContext(),"Word not found in dictionary", Toast.LENGTH_LONG).show();
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
     private class GetDataTask extends AsyncTask<String, Void, List<String>> {
         @Override
         protected List<String> doInBackground(String... params) {
@@ -134,6 +139,9 @@ public class MainActivity extends AppCompatActivity {
             httpRequestService = new HttpRequestService();
             try {
                 wordDetailTypeArrayList = httpRequestService.getData(word, query);
+                if(wordDetailTypeArrayList.size() == 0){
+                    showWordNotFoundError();
+                }
                 return new ArrayList<>();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -143,15 +151,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<String> result) {
-            progressBar.setVisibility(View.INVISIBLE);
-            arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
-            List<String> parsedResponse = new ArrayList<>();
-            for (WordDetailType entry : wordDetailTypeArrayList) {
-                parsedResponse.add(entry.getString());
-            }
-            listView.setAdapter(arrayAdapter);
-            arrayAdapter.addAll(parsedResponse);
-            arrayAdapter.notifyDataSetChanged();
+            if(result != null && result.size() >0) {
+                progressBar.setVisibility(View.INVISIBLE);
+                arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
+                List<String> parsedResponse = new ArrayList<>();
+                for (WordDetailType entry : wordDetailTypeArrayList) {
+                    parsedResponse.add(entry.getString());
+                }
+                listView.setAdapter(arrayAdapter);
+                arrayAdapter.addAll(parsedResponse);
+                arrayAdapter.notifyDataSetChanged();
+            }else showWordNotFoundError();
         }
     }
 

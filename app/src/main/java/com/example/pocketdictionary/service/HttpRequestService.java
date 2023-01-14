@@ -38,7 +38,7 @@ public class HttpRequestService {
         Log.i(TAG, "getData: started call to url" + url);
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("X-RapidAPI-Key","2150b50475mshc34b37f2f134b0ep18e89bjsn58c15a6ebd56")
+                .addHeader("X-RapidAPI-Key", "2150b50475mshc34b37f2f134b0ep18e89bjsn58c15a6ebd56")
                 .addHeader("X-RapidAPI-Host", "wordsapiv1.p.rapidapi.com")
                 .build();
         String responseString;
@@ -46,8 +46,8 @@ public class HttpRequestService {
         try (Response response = client.newCall(request).execute()) {
             responseString = response.body().string();
             JSONObject errorObject = new JSONObject(responseString);
-            if(errorObject.has("success") && !errorObject.getBoolean("success"))
-            Log.i(TAG, "getData:" + responseString);
+            if (errorObject.has("success") && !errorObject.getBoolean("success"))
+                Log.i(TAG, "getData:" + responseString);
             switch (query) {
                 case "definitions":
                     return parseDefinitionsFromString(responseString);
