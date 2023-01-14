@@ -1,6 +1,8 @@
 package com.example.pocketdictionary;
 
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +29,7 @@ import com.example.pocketdictionary.model.Synonyms;
 import com.example.pocketdictionary.model.WhatToGet;
 import com.example.pocketdictionary.model.WordEntry;
 import com.example.pocketdictionary.service.DatabaseQueryService;
+import com.example.pocketdictionary.service.NightModeService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,8 @@ public class OfflineActivity extends AppCompatActivity {
     private RhymesDAO rhymesDAO;
     private DefinitionsDAO definitionsDAO;
     private AppDatabase appDatabase;
+    private NightModeService nightModeService;
+    private boolean hasLightSensor;
 
     private String word;
     private String query;
@@ -63,6 +68,15 @@ public class OfflineActivity extends AppCompatActivity {
         antonymsDAO = appDatabase.antonymsDAO();
         rhymesDAO = appDatabase.rhymesDAO();
         definitionsDAO = appDatabase.definitionsDAO();
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (lightSensor != null) {
+            hasLightSensor = true;
+            nightModeService = new NightModeService(getApplicationContext(), 20000);
+            nightModeService.start();
+        } else {
+            hasLightSensor = false;
+        }
 
         dropdown = findViewById(R.id.detailsSpinnerOffline);
         dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
@@ -76,6 +90,8 @@ public class OfflineActivity extends AppCompatActivity {
     public void switchToOnlineMode(View view) {
         onlineIntent = new Intent(this, MainActivity.class);
         Toast.makeText(getApplicationContext(), "Going online", Toast.LENGTH_LONG).show();
+        if (hasLightSensor)
+            nightModeService.stop();
         startActivity(onlineIntent);
     }
 
@@ -96,7 +112,7 @@ public class OfflineActivity extends AppCompatActivity {
             } else {
                 Log.i(TAG, "doInBackground: " + wordEntry.getWord());
                 List<String> result = new ArrayList<>();
-                String lowercaseQuery = query.substring(0,1).toUpperCase() + query.substring(1);
+                String lowercaseQuery = query.substring(0, 1).toUpperCase() + query.substring(1);
                 switch (lowercaseQuery) {
                     case WhatToGet.ANTONYMS:
                         List<Antonyms> antonymsList = antonymsDAO.getAntonymsForWord(wordEntry.getId());
@@ -108,28 +124,28 @@ public class OfflineActivity extends AppCompatActivity {
                         } else break;
                     case WhatToGet.SYNONYMS:
                         List<Synonyms> synonymsList = synonymsDAO.getSynonymsForWord(wordEntry.getId());
-                        if(synonymsList.size() > 0){
-                        for (Synonyms synonym : synonymsList) {
-                            result.add(synonym.getString());
-                        }
-                        return result;
-                        }else break;
+                        if (synonymsList.size() > 0) {
+                            for (Synonyms synonym : synonymsList) {
+                                result.add(synonym.getString());
+                            }
+                            return result;
+                        } else break;
                     case WhatToGet.DEFINITIONS:
                         List<Definitions> definitionsList = definitionsDAO.getDefinitionsForWord(wordEntry.getId());
-                        if(definitionsList.size() > 0) {
+                        if (definitionsList.size() > 0) {
                             for (Definitions definition : definitionsList) {
                                 result.add(definition.getString());
                             }
                             return result;
-                        }else break;
+                        } else break;
                     case WhatToGet.RHYMES:
                         List<Rhymes> rhymesList = rhymesDAO.getRhymesForWord(wordEntry.getId());
-                        if(rhymesList.size() > 0) {
+                        if (rhymesList.size() > 0) {
                             for (Rhymes rhyme : rhymesList) {
                                 result.add(rhyme.getString());
                             }
                             return result;
-                        }else break;
+                        } else break;
                 }
                 Log.i(TAG, "doInBackground: No query found");
                 return result;

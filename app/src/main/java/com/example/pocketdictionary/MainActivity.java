@@ -3,6 +3,8 @@ package com.example.pocketdictionary;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,7 @@ import com.example.pocketdictionary.model.WordDetailType;
 import com.example.pocketdictionary.model.WordEntry;
 import com.example.pocketdictionary.service.DatabaseQueryService;
 import com.example.pocketdictionary.service.HttpRequestService;
+import com.example.pocketdictionary.service.NightModeService;
 import com.example.pocketdictionary.util.InternetCheck;
 
 import org.json.JSONException;
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private String word;
     private String query;
+    private NightModeService nightModeService;
+    private boolean hasLightSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,15 @@ public class MainActivity extends AppCompatActivity {
         searchbar = findViewById(R.id.wordInputEditText);
         searchButton = findViewById(R.id.searchOnlineButton);
         context = getApplicationContext();
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (lightSensor != null) {
+            hasLightSensor = true;
+            nightModeService = new NightModeService(getApplicationContext(), 20000);
+            nightModeService.start();
+        } else {
+            hasLightSensor = false;
+        }
 
 
         dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
@@ -83,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             startActivity(offlineIntent);
+                            if (hasLightSensor)
+                                nightModeService.stop();
                             Log.i(TAG, "onClick: offline");
                         }
                     }).show();
@@ -97,7 +113,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void switchToOfflineMode(View view) {
         Toast.makeText(getApplicationContext(), "Going offline", Toast.LENGTH_LONG).show();
-        startActivity(offlineIntent);
+        if (hasLightSensor)
+            startActivity(offlineIntent);
+        nightModeService.stop();
     }
 
     public void searchOnlineButton(View view) {
@@ -160,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         WordEntry wordEntry = new WordEntry(word);
         WordDetailType wordDetailType = wordDetailTypeArrayList.get(index);
         DatabaseQueryService databaseQueryService = new DatabaseQueryService(context);
-        databaseQueryService.saveToDatabase(wordEntry,wordDetailType,query);
+        databaseQueryService.saveToDatabase(wordEntry, wordDetailType, query);
     }
 
 }
