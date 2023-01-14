@@ -17,7 +17,7 @@ import com.example.pocketdictionary.model.Rhymes;
 import com.example.pocketdictionary.model.Synonyms;
 import com.example.pocketdictionary.model.WordEntry;
 
-@Database(entities = {WordEntry.class, Synonyms.class, Rhymes.class, Definitions.class, Antonyms.class}, version = 3)
+@Database(entities = {WordEntry.class, Synonyms.class, Rhymes.class, Definitions.class, Antonyms.class}, version = 6)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
 
@@ -30,7 +30,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "app_database")
+                            AppDatabase.class, "mobile-dictionary")
                     .build();
         }
         return instance;

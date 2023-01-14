@@ -25,7 +25,7 @@ public interface AntonymsDAO {
     List<Antonyms> getAntonymsForWord(long wordId);
 
     @Insert
-    void insert(Antonyms antonyms);
+    long insert(Antonyms antonyms);
 
     @Delete
     void delete(Antonyms antonyms);

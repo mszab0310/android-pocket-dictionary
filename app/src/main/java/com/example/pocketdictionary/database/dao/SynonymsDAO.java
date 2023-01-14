@@ -25,7 +25,7 @@ public interface SynonymsDAO {
     List<Synonyms> getSynonymsForWord(long wordId);
 
     @Insert
-    void insert(Synonyms synonym);
+    long insert(Synonyms synonym);
 
     @Delete
     void delete(Synonyms synonyms);

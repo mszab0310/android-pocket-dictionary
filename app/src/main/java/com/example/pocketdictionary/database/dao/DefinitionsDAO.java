@@ -24,7 +24,7 @@ public interface DefinitionsDAO {
     List<Definitions> getDefinitionsForWord(long wordId);
 
     @Insert
-    void insert(Definitions definitions);
+    long insert(Definitions definitions);
 
     @Delete
     void delete(Definitions definitions);

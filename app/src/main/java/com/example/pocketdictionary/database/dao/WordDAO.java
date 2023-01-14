@@ -21,7 +21,7 @@ public interface WordDAO {
     WordEntry findById(Long id);
 
     @Insert
-    void insert(WordEntry wordEntry);
+    long insert(WordEntry wordEntry);
 
     @Delete
     void delete(WordEntry wordEntry);

@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i(TAG, "onClick: I got clicked");
                         saveToDatabase(index);
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -155,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveToDatabase(int index) {
+        Log.i(TAG, "saveToDatabase: Trying to save to db");
         WordEntry wordEntry = new WordEntry(word);
         WordDetailType wordDetailType = wordDetailTypeArrayList.get(index);
         DatabaseQueryService databaseQueryService = new DatabaseQueryService(context);

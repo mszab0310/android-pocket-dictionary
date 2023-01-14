@@ -26,7 +26,7 @@ public interface RhymesDAO {
     List<Rhymes> getRhymesForWord(long wordId);
 
     @Insert
-    void insert(Rhymes rhymes);
+    long insert(Rhymes rhymes);
 
     @Delete
     void delete(Rhymes rhymes);
