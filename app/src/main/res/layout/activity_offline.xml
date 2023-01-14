@@ -13,6 +13,7 @@
         android:ems="10"
         android:hint="Search for a word"
         android:inputType="textPersonName"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -46,6 +47,7 @@
         android:id="@+id/detailsSpinnerOffline"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -57,6 +59,7 @@
         android:id="@+id/switchToOnlineMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:onClick="switchToOnlineMode"
         android:text="@string/onlineMode"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,4 +68,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.022" />
+
+    <ListView
+        android:id="@+id/offlineListView"
+        android:layout_width="409dp"
+        android:layout_height="350dp"
+        android:padding="5pt"
+        android:paddingLeft="5pt"
+        android:paddingEnd="5pt"
+        android:paddingRight="5pt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailsSpinnerOffline"
+        app:layout_constraintVertical_bias="0.75" />
 </androidx.constraintlayout.widget.ConstraintLayout>

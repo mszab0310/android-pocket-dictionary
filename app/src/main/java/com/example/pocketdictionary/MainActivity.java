@@ -78,9 +78,7 @@ public class MainActivity extends AppCompatActivity {
         context = getApplicationContext();
 
         //database init
-        db = Room.databaseBuilder(getApplicationContext(),
-                        AppDatabase.class, "dictionary-database")
-                .build();
+        db = AppDatabase.getInstance(getApplicationContext());
         wordDAO = db.wordDAO();
         synonymsDAO = db.synonymsDAO();
         antonymsDAO = db.antonymsDAO();
