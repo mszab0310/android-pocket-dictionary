@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,6 +42,7 @@ public class OfflineActivity extends AppCompatActivity {
     private Intent onlineIntent;
     private EditText searchbar;
     private Button searchButton;
+    private TextView errorTextView;
     private ListView listView;
     private ArrayAdapter<String> arrayAdapter;
     private WordDAO wordDAO;
@@ -78,6 +80,7 @@ public class OfflineActivity extends AppCompatActivity {
             hasLightSensor = false;
         }
 
+        errorTextView = findViewById(R.id.errorTextView);
         dropdown = findViewById(R.id.detailsSpinnerOffline);
         dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
         dropdown.setAdapter(dropdownAdapter);
@@ -96,10 +99,23 @@ public class OfflineActivity extends AppCompatActivity {
     }
 
     public void searchOfflineButton(View view) {
+        errorTextView.setText("");
+        if(arrayAdapter != null) {
+            arrayAdapter.clear();
+            arrayAdapter.notifyDataSetChanged();
+        }
         word = searchbar.getText().toString();
         query = dropdown.getSelectedItem().toString();
         Log.i(TAG, "searchOfflineButton: " + word + " " + query);
         new ExecuteQuery().execute();
+    }
+
+    public void showWordNotFound(){
+        errorTextView.setText("Word not found, try searching online");
+    }
+
+    public void showDetailsNotFound(){
+        errorTextView.setText( query + " not found, try searching online");
     }
 
     class ExecuteQuery extends AsyncTask<Void, Void, List<String>> {
@@ -108,7 +124,13 @@ public class OfflineActivity extends AppCompatActivity {
             Log.i(TAG, "doInBackground: Started background query thread");
             WordEntry wordEntry = wordDAO.findByName(word);
             if (wordEntry == null) {
-                return new ArrayList<>();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showWordNotFound();
+                    }
+                });
+                return null;
             } else {
                 Log.i(TAG, "doInBackground: " + wordEntry.getWord());
                 List<String> result = new ArrayList<>();
@@ -148,17 +170,27 @@ public class OfflineActivity extends AppCompatActivity {
                         } else break;
                 }
                 Log.i(TAG, "doInBackground: No query found");
-                return result;
             }
+            return null;
         }
 
         @Override
         protected void onPostExecute(List<String> details) {
-            Log.i(TAG, "onPostExecute: The details length is" + details.size());
-            arrayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1);
-            listView.setAdapter(arrayAdapter);
-            arrayAdapter.addAll(details);
-            arrayAdapter.notifyDataSetChanged();
+            if(details != null && details.size() > 0) {
+                Log.i(TAG, "onPostExecute: The details length is" + details.size());
+                arrayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1);
+                listView.setAdapter(arrayAdapter);
+                arrayAdapter.addAll(details);
+                arrayAdapter.notifyDataSetChanged();
+            }else{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showDetailsNotFound();
+                    }
+                });
+
+            }
         }
     }
 }

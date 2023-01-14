@@ -120,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void searchOnlineButton(View view) {
         progressBar.setVisibility(View.VISIBLE);
+        if(arrayAdapter != null && wordDetailTypeArrayList != null) {
+            wordDetailTypeArrayList.clear();
+            arrayAdapter.clear();
+            arrayAdapter.notifyDataSetChanged();
+        }
         String word = searchbar.getText().toString();
         String query = detailsDropdown.getSelectedItem().toString().toLowerCase();
         Log.i(TAG, "searchOnlineButton: word & query" + word + " " + query);
@@ -151,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<String> result) {
-            if(result != null && result.size() >0) {
+            if(wordDetailTypeArrayList != null && wordDetailTypeArrayList.size() >0) {
                 progressBar.setVisibility(View.INVISIBLE);
                 arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
                 List<String> parsedResponse = new ArrayList<>();
