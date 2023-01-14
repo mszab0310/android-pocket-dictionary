@@ -18,21 +18,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
-import com.example.pocketdictionary.database.AppDatabase;
-import com.example.pocketdictionary.database.dao.AntonymsDAO;
-import com.example.pocketdictionary.database.dao.DefinitionsDAO;
-import com.example.pocketdictionary.database.dao.RhymesDAO;
-import com.example.pocketdictionary.database.dao.SynonymsDAO;
-import com.example.pocketdictionary.database.dao.WordDAO;
-import com.example.pocketdictionary.model.Antonyms;
-import com.example.pocketdictionary.model.Definitions;
-import com.example.pocketdictionary.model.Rhymes;
-import com.example.pocketdictionary.model.Synonyms;
 import com.example.pocketdictionary.model.WhatToGet;
 import com.example.pocketdictionary.model.WordDetailType;
 import com.example.pocketdictionary.model.WordEntry;
+import com.example.pocketdictionary.service.DatabaseQueryService;
 import com.example.pocketdictionary.service.HttpRequestService;
 import com.example.pocketdictionary.util.InternetCheck;
 
@@ -44,12 +34,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private Spinner detailsDropdown;
-    private WordDAO wordDAO;
-    private SynonymsDAO synonymsDAO;
-    private AntonymsDAO antonymsDAO;
-    private RhymesDAO rhymesDAO;
-    private DefinitionsDAO definitionsDAO;
-    private AppDatabase db;
     private ArrayAdapter<String> dropdownAdapter;
     private AlertDialog.Builder alertBuilder;
     private static final String TAG = "MainActivity";
@@ -77,13 +61,6 @@ public class MainActivity extends AppCompatActivity {
         searchButton = findViewById(R.id.searchOnlineButton);
         context = getApplicationContext();
 
-        //database init
-        db = AppDatabase.getInstance(getApplicationContext());
-        wordDAO = db.wordDAO();
-        synonymsDAO = db.synonymsDAO();
-        antonymsDAO = db.antonymsDAO();
-        rhymesDAO = db.rhymesDAO();
-        definitionsDAO = db.definitionsDAO();
 
         dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, WhatToGet.getListOfPossibilities());
         detailsDropdown.setAdapter(dropdownAdapter);
@@ -180,21 +157,8 @@ public class MainActivity extends AppCompatActivity {
     private void saveToDatabase(int index) {
         WordEntry wordEntry = new WordEntry(word);
         WordDetailType wordDetailType = wordDetailTypeArrayList.get(index);
-        wordDAO.insert(wordEntry);
-        switch (query) {
-            case WhatToGet.ANTONYMS:
-                antonymsDAO.insert((Antonyms) wordDetailType);
-                break;
-            case WhatToGet.SYNONYMS:
-                synonymsDAO.insert((Synonyms) wordDetailType);
-                break;
-            case WhatToGet.DEFINITIONS:
-                definitionsDAO.insert((Definitions) wordDetailType);
-                break;
-            case WhatToGet.RHYMES:
-                rhymesDAO.insert((Rhymes) wordDetailType);
-                break;
-        }
+        DatabaseQueryService databaseQueryService = new DatabaseQueryService(context);
+        databaseQueryService.saveToDatabase(wordEntry,wordDetailType,query);
     }
 
 }

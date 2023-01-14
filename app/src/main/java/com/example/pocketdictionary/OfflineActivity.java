@@ -30,6 +30,8 @@ public class OfflineActivity extends AppCompatActivity {
     private ArrayAdapter<String> arrayAdapter;
     private List<WordDetailType> wordDetailTypeArrayList;
     private AppDatabase appDatabase;
+    private String word;
+    private String query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,5 +50,11 @@ public class OfflineActivity extends AppCompatActivity {
         onlineIntent = new Intent(this, MainActivity.class);
         Toast.makeText(getApplicationContext(), "Going online", Toast.LENGTH_LONG).show();
         startActivity(onlineIntent);
+    }
+
+    public void searchOfflineButton(View view){
+        word = searchbar.getText().toString();
+        query = dropdown.getSelectedItem().toString();
+
     }
 }
