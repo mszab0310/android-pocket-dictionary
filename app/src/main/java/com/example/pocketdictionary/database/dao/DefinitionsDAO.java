@@ -20,6 +20,9 @@ public interface DefinitionsDAO {
     @Query("SELECT * from definitions where id = :id")
     Definitions findById(Long id);
 
+    @Query("SELECT * FROM definitions WHERE wordId = :wordId")
+    List<Definitions> getDefinitionsForWord(long wordId);
+
     @Insert
     void insert(Definitions definitions);
 

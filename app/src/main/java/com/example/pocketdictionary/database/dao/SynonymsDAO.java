@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import com.example.pocketdictionary.model.Rhymes;
 import com.example.pocketdictionary.model.Synonyms;
 
 import java.util.List;
@@ -19,6 +20,9 @@ public interface SynonymsDAO {
 
     @Query("SELECT * from synonyms where id = :id")
     Synonyms findById(Long id);
+
+    @Query("SELECT * FROM synonyms WHERE wordId = :wordId")
+    List<Synonyms> getSynonymsForWord(long wordId);
 
     @Insert
     void insert(Synonyms synonym);

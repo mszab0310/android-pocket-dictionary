@@ -56,5 +56,6 @@ public class OfflineActivity extends AppCompatActivity {
         word = searchbar.getText().toString();
         query = dropdown.getSelectedItem().toString();
 
+
     }
 }

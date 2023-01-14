@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.example.pocketdictionary.model.Antonyms;
+import com.example.pocketdictionary.model.Definitions;
 
 import java.util.List;
 
@@ -19,6 +20,9 @@ public interface AntonymsDAO {
 
     @Query("SELECT * from antonyms where id = :id")
     Antonyms findById(Long id);
+
+    @Query("SELECT * FROM antonyms WHERE wordId = :wordId")
+    List<Antonyms> getAntonymsForWord(long wordId);
 
     @Insert
     void insert(Antonyms antonyms);
