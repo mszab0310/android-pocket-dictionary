@@ -1,5 +1,6 @@
 package com.example.pocketdictionary;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -53,11 +54,13 @@ public class OfflineActivity extends AppCompatActivity {
     private AppDatabase appDatabase;
     private NightModeService nightModeService;
     private boolean hasLightSensor;
+    private TextView offlineQuery;
 
     private String word;
     private String query;
     private DatabaseQueryService databaseQueryService;
     private static final String TAG = "OfflineActivity";
+    private AlertDialog.Builder alertBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class OfflineActivity extends AppCompatActivity {
         antonymsDAO = appDatabase.antonymsDAO();
         rhymesDAO = appDatabase.rhymesDAO();
         definitionsDAO = appDatabase.definitionsDAO();
+        offlineQuery = findViewById(R.id.queryOfflineText);
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if (lightSensor != null) {
@@ -79,6 +83,7 @@ public class OfflineActivity extends AppCompatActivity {
         } else {
             hasLightSensor = false;
         }
+        alertBuilder = new AlertDialog.Builder(this);
 
         errorTextView = findViewById(R.id.errorTextView);
         dropdown = findViewById(R.id.detailsSpinnerOffline);
@@ -88,6 +93,7 @@ public class OfflineActivity extends AppCompatActivity {
         searchButton = findViewById(R.id.searchOfflineButton);
         listView = findViewById(R.id.offlineListView);
         databaseQueryService = new DatabaseQueryService(getApplicationContext());
+
     }
 
     public void switchToOnlineMode(View view) {
@@ -106,6 +112,7 @@ public class OfflineActivity extends AppCompatActivity {
         }
         word = searchbar.getText().toString();
         query = dropdown.getSelectedItem().toString();
+        offlineQuery.setText(query.substring(0,1).toUpperCase() + query.substring(1));
         Log.i(TAG, "searchOfflineButton: " + word + " " + query);
         new ExecuteQuery().execute();
     }
@@ -117,6 +124,9 @@ public class OfflineActivity extends AppCompatActivity {
     public void showDetailsNotFound(){
         errorTextView.setText( query + " not found, try searching online");
     }
+
+
+
 
     class ExecuteQuery extends AsyncTask<Void, Void, List<String>> {
         @Override

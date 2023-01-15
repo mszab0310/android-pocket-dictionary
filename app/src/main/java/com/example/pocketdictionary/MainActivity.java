@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private String query;
     private NightModeService nightModeService;
     private boolean hasLightSensor;
+    private TextView selectedQuery;
+    private TextView hintTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
         searchbar = findViewById(R.id.wordInputEditText);
         searchButton = findViewById(R.id.searchOnlineButton);
         context = getApplicationContext();
+        selectedQuery = findViewById(R.id.selectedQuery);
+        hintTextView = findViewById(R.id.hintTextView);
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if (lightSensor != null) {
@@ -127,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         }
         String word = searchbar.getText().toString();
         String query = detailsDropdown.getSelectedItem().toString().toLowerCase();
+        selectedQuery.setText(query.substring(0,1).toUpperCase() + query.substring(1));
         Log.i(TAG, "searchOnlineButton: word & query" + word + " " + query);
         new GetDataTask().execute(word, query);
     }
@@ -166,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
                 listView.setAdapter(arrayAdapter);
                 arrayAdapter.addAll(parsedResponse);
                 arrayAdapter.notifyDataSetChanged();
+                String hintText = "Tap on a "+ query.substring(0,query.length()-1) + " to save it";
+                hintTextView.setText(hintText);
             }else showWordNotFoundError();
         }
     }
